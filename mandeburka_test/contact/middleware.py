@@ -1,3 +1,7 @@
+from mandeburka_test.contact.models import Request
+
+
 class ContactMiddleware(object):
     def process_request(self, request):
-        pass
+        r = Request(method=request.method, path=request.path)
+        r.save()

@@ -24,23 +24,23 @@ class ContactTest(TestCase):
 
     def test_request_middleware(self):
         response = self.client.get('/')
-        response = self.client.get('/admin')
+        response = self.client.get('/requests')
         response = self.client.post('/')
-        response = self.client.post('/admin')
+        response = self.client.post('/requests')
         self.assertQuerysetEqual(
             Request.objects.order_by('created_at'),
             [
                 '<Request: / GET>',
-                '<Request: /admin GET',
+                '<Request: /requests GET>',
                 '<Request: / POST>',
-                '<Request: /admin POST>'
+                '<Request: /requests POST>'
             ])
         response = self.client.get('/requests')
         self.assertContains(response, '/ POST')
-        self.assertContains(response, '/admin POST')
+        self.assertContains(response, '/requests POST')
         for i in range(10):
             response = self.client.post('/')
         response = self.client.get('/requests')
         self.assertNotContains(response, '/ GET')
-        self.assertNotContains(response, '/admin POST')
+        self.assertNotContains(response, '/requests POST')
         self.assertContains(response, '/ POST')

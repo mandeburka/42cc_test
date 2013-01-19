@@ -13,6 +13,9 @@ class UserProfile(User):
 
 
 class Request(models.Model):
-    created_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now=True)
     path = models.TextField()
     method = models.CharField(max_length=10)
+
+    def __unicode__(self):
+        return '%s %s' % (self.path, self.method)
