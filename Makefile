@@ -8,3 +8,4 @@ run:
 
 syncdb:
 	PYTHONPATH=`pwd` DJANGO_SETTINGS_MODULE=mandeburka_test.settings $(MANAGE) syncdb --noinput
+	PYTHONPATH=`pwd` DJANGO_SETTINGS_MODULE=mandeburka_test.settings $(MANAGE) migrate
