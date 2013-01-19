@@ -35,3 +35,12 @@ class ContactTest(TestCase):
                 '<Request: / POST>',
                 '<Request: /admin POST>'
             ])
+        response = self.client.get('/requests')
+        self.assertContains(response, '/ POST')
+        self.assertContains(response, '/admin POST')
+        for i in range(10):
+            response = self.client.post('/')
+        response = self.client.get('/requests')
+        self.assertNotContains(response, '/ GET')
+        self.assertNotContains(response, '/admin POST')
+        self.assertContains(response, '/ POST')
