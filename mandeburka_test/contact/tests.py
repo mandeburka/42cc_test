@@ -48,3 +48,5 @@ class ContactTest(TestCase):
     def test_settings_in_context(self):
         response = self.client.get('/')
         self.assertIn('settings', response.context)
+        settings = response.context['settings']
+        self.assertEquals(settings.TIME_ZONE, 'Europe/Kiev')
