@@ -16,5 +16,17 @@
       "email": "admin@mail.com", 
       "date_joined": "2013-01-19T09:19:23.263Z"
     }
+  },
+  {
+    "pk": 1,
+    "model": "contact.userprofile",
+    "fields": {
+      "user": 1,
+      "date_of_birth": "1987-02-14",
+      "bio": "My Bio Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean adipiscing, massa at iaculis hendrerit, tortor augue ornare purus, at lacinia erat libero vitae urna. Sed quis felis dui. Pellentesque lobortis varius libero sed interdum. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Integer tempus elementum tincidunt. Nullam vestibulum iaculis sem gravida lacinia. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam laoreet varius augue, a tempus urna venenatis eu. In hac habitasse platea dictumst. Praesent semper neque velit, vitae consectetur lacus. Cras interdum dapibus posuere. Curabitur nisl tellus, vehicula a semper at, eleifend sit amet arcu. Mauris pellentesque odio ut nulla fermentum in auctor ligula convallis.",
+      "jabber": "test@jabber.com",
+      "skype": "skype_id_test",
+      "other_contacts": "My other contacts Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean adipiscing, massa at iaculis hendrerit, tortor augue ornare purus, at lacinia erat libero vitae urna. Sed quis felis dui. Pellentesque lobortis varius libero sed interdum. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Integer tempus elementum tincidunt. Nullam vestibulum iaculis sem gravida lacinia. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam laoreet varius augue, a tempus urna venenatis eu. In hac habitasse platea dictumst. Praesent semper neque velit, vitae consectetur lacus. Cras interdum dapibus posuere. Curabitur nisl tellus, vehicula a semper at, eleifend sit amet arcu. Mauris pellentesque odio ut nulla fermentum in auctor ligula convallis."
+    }
   }
 ]

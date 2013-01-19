@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="row">
+        <div class="span4">
+            <p>{{ user.first_name }}</p>
+            <p>{{ user.last_name }}</p>
+            <p>{{ user.userprofile.date_of_birth|date:"d.m.Y" }}</p>
+            <div>Bio:</div>
+            <p>{{ user.userprofile.bio }}</p>
+        </div>
+        <div class="span4 offset1">
+            <p>Contacts</p>
+            <p>Email: {{ user.email }}</p>
+            <p>Jabber: {{ user.userprofile.jabber }}</p>
+            <p>Skype: {{ user.userprofile.skype }}</p>
+            <div>Other contacts:</div>
+            <p>{{ user.userprofile.other_contacts }}</p>
+        </div>
+    </div>
+{% endblock content %}
