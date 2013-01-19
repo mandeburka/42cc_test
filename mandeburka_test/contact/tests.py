@@ -44,3 +44,7 @@ class ContactTest(TestCase):
         self.assertNotContains(response, '/ GET')
         self.assertNotContains(response, '/requests POST')
         self.assertContains(response, '/ POST')
+
+    def test_settings_in_context(self):
+        response = self.client.get('/')
+        self.assertIn('settings', response.context)
