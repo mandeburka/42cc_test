@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
+from mandeburka_test.contact.models import Request
 
 
 class ContactTest(TestCase):
@@ -20,3 +21,17 @@ class ContactTest(TestCase):
         self.assertContains(response, 'My Bio')
         self.assertContains(response, 'My other contacts')
         self.assertContains(response, 'Skype: skype_id_test')
+
+    def test_request_middleware(self):
+        response = self.client.get('/')
+        response = self.client.get('/admin')
+        response = self.client.post('/')
+        response = self.client.post('/admin')
+        self.assertQuerysetEqual(
+            Request.objects.order_by('created_at'),
+            [
+                '<Request: / GET>',
+                '<Request: /admin GET',
+                '<Request: / POST>',
+                '<Request: /admin POST>'
+            ])

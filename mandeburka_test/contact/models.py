@@ -10,3 +10,9 @@ class UserProfile(User):
     jabber = models.CharField(max_length=255, null=True)
     skype = models.CharField(max_length=255, null=True)
     other_contacts = models.TextField(null=True)
+
+
+class Request(models.Model):
+    created_at = models.DateTimeField()
+    path = models.TextField()
+    method = models.CharField(max_length=10)
