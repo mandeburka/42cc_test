@@ -168,3 +168,5 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
     'mandeburka_test.contact.context_processors.django_settings_processor'
 )
+
+LOGIN_REDIRECT_URL = '/'

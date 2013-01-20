@@ -11,5 +11,6 @@ urlpatterns = patterns(
         queryset=Request.objects.order_by('-created_at')[:10],
         context_object_name='requests',
         template_name='contact/requests.html'
-        ), name='requests')
+        ), name='requests'),
+    url(r'^edit', 'mandeburka_test.contact.views.edit', name='edit')
 )
