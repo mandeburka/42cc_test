@@ -1,9 +1,98 @@
 {% extends "base.html" %}
+{% block stylesheets %}
+  {{ block.super }}
+  <link href="{{ STATIC_URL }}css/edit.css" rel="stylesheet">
+{% endblock stylesheets %}
 {% block content %}
-    <form action="">
-        <div>
-            <input type="submit" value="save"/>
-            <a href="{% url contact:index %}">Cancel</a>
+    <form action="{% url contact:edit %}" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="row">
+        <div class="span5">
+          <table>
+            <tr>
+              <td><label for="id_first_name">Name:</label></td>
+              <td>
+                {{ form.first_name.errors }}
+                {{ form.first_name }}
+              </td>
+            </tr>
+            <tr>
+              <td><label for="id_last_name">Last Name:</label></td>
+              <td>
+                {{ form.last_name.errors }}
+                {{ form.last_name }}
+              </td>
+            </tr>
+            <tr>
+              <td><label for="id_date_of_birth">Date of Birth:</label></td>
+              <td>
+                {{ form.date_of_birth.errors }}
+                {{ form.date_of_birth }}
+              </td>
+            </tr>
+            <tr>
+              <td><label for="id_photo">Photo:</label></td>
+              <td>
+                {{ form.photo.errors }}
+                {{ form.photo }}
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                {% if form.photo.value %}
+                  <img class="photo-preview" src="{{MEDIA_URL}}{{ form.photo.value }}"/>
+                {% endif %}
+              </td>
+            </tr>
+          </table>
         </div>
+        <div class="span5">
+          <table>
+            <tr>
+              <td><label for="id_email">Email:</label></td>
+              <td>
+                {{ form.email.errors }}
+                {{ form.email }}
+              </td>
+            </tr>
+            <tr>
+              <td><label for="id_jabber">Jabber:</label></td>
+              <td>
+                {{ form.jabber.errors }}
+                {{ form.jabber }}
+              </td>
+            </tr>
+            <tr>
+              <td><label for="id_skype">Skype:</label></td>
+              <td>
+                {{ form.skype.errors }}
+                {{ form.skype }}
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2"><label for="id_other_contacts">Other contacts:</label></td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                {{ form.other_contacts.errors }}
+                {{ form.other_contacts }}
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2"><label for="id_bio">Bio:</label></td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                {{ form.bio.errors }}
+                {{ form.bio }}
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="actions">
+        <input type="submit" class="btn" value="Save"/>
+        <a href="{% url contact:index %}">Cancel</a>
+      </div>
     </form>
 {% endblock content %}

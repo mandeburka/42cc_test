@@ -57,30 +57,33 @@ class ContactTest(TestCase):
         response = self.client.get('/edit')
         # redirect anonymous user to login page
         self.assertEquals(response.status_code, 302)
-        self.assertEqual(resp['Location'], 'http://testserver/login')
+        self.assertEqual(
+            response['Location'],
+            'http://testserver/accounts/login/?next=/edit')
         # authenticated user can see edit page
         self.client.login(username='admin', password='admin')
         response = self.client.get('/edit')
         self.assertEquals(response.status_code, 200)
 
     def test_edit_form(self):
-        self.client.login(username='admin', password='admin')
         user = User.objects.get(username='admin')
         # valid form submission should update user record
         data = {
             'first_name': '%s_%d' % (user.first_name, randint(0, 100)),
             'last_name': '%s_%d' % (user.last_name, randint(0, 100)),
-            'date_of_birth': '%02d.%02d.%d' %
-            (randint(1, 28), randint(1, 12,), randint(1900, 2000)),
+            'date_of_birth': '%d-%02d-%02d' %
+            (randint(1900, 2000), randint(1, 12), randint(1, 28)),
             'bio': '%s_%d' % (user.userprofile.bio, randint(0, 100)),
             'jabber': '%s_%d' % (user.userprofile.jabber, randint(0, 100)),
             'skype': '%s_%d' % (user.userprofile.skype, randint(0, 100)),
             'other_contacts': '%s_%d' %
             (user.userprofile.other_contacts, randint(0, 100)),
         }
+        self.client.login(username='admin', password='admin')
         response = self.client.post('/edit', data)
         self.assertEquals(response.status_code, 302)
-        self.assertEqual(resp['Location'], 'http://testserver/')
+        self.assertEqual(
+            response['Location'], 'http://testserver/')
         # reload user
         user = User.objects.get(username='admin')
         for k, v in data.iteritems():
@@ -89,5 +92,5 @@ class ContactTest(TestCase):
             else:
                 user_value = getattr(user.userprofile, k)
             if k == 'date_of_birth':
-                user_value = user_value.strftime('%d.%m.%Y')
+                user_value = user_value.strftime('%Y-%m-%d')
             self.assertEquals(v, user_value)

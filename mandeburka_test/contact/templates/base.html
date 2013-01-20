@@ -8,23 +8,18 @@
   <meta name="author" content="">
 
   <!-- Le styles -->
-  <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet">
+  {% block stylesheets %}
+    <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet">
+  {% endblock stylesheets %}
 </head>
 
 <body>
   <div class="container">
     <h1>42 Coffee Cups Test Assignment</h1>
     <div class="row">
-      <div class="span9">
+      <div class="span12">
       {% block content %}
       {% endblock content %}
-      </div>
-      <div class="span3">
-        {% if user.is_authenticated %}
-          <a href="{% url contact:edit %}">Edit</a>
-        {% else %}
-        <a href="{% url login %}">Login</a>
-        {% endif %}
       </div>
     </div>
     <hr/>

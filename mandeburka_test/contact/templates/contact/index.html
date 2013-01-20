@@ -16,5 +16,12 @@
     <div>Other contacts:</div>
     <p>{{ contact_user.userprofile.other_contacts }}</p>
   </div>
+  <div class="span3">
+    {% if user.is_authenticated %}
+    <a href="{% url contact:edit %}">Edit</a>
+    {% else %}
+    <a href="{% url login %}">Login</a>
+    {% endif %}
+  </div>
 </div>
 {% endblock content %}

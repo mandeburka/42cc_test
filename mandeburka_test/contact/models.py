@@ -10,6 +10,7 @@ class UserProfile(User):
     jabber = models.CharField(max_length=255, null=True)
     skype = models.CharField(max_length=255, null=True)
     other_contacts = models.TextField(null=True)
+    photo = models.ImageField(upload_to='photos', null=True, blank=True)
 
 
 class Request(models.Model):
