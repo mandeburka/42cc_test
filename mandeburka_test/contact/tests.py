@@ -127,13 +127,12 @@ class ContactTest(TestCase):
         user = User.objects.get(username='admin')
         c = Context({'object': user})
         self.assertEquals(
-            'http://testserver/admin/auth/user/%d/' % user.id,
+            '/admin/auth/user/%d/' % user.id,
             t.render(c)
         )
         site = Site.objects.get(pk=1)
         c = Context({'object': site})
         self.assertEquals(
-            'http://testserver/admin/sites/site/%d/' % site.id,
+            '/admin/sites/site/%d/' % site.id,
             t.render(c)
         )
-        self.render
