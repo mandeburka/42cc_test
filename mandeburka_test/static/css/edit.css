@@ -1,0 +1,23 @@
+.photo-preview{
+    max-width: 300px;
+}
+table td{
+    word-wrap: none;
+    vertical-align: top;
+}
+
+label{
+    margin-right: 10px;
+}
+
+.actions{
+    margin-top: 10px;
+}
+
+textarea {
+    width: 100%;
+}
+
+.errorlist>li{
+    color: red;
+}
