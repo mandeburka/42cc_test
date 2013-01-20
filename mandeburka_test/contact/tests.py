@@ -65,10 +65,8 @@ class ContactTest(TestCase):
         response = self.client.get('/edit')
         self.assertEquals(response.status_code, 200)
 
-    def test_edit_form(self):
-        user = User.objects.get(username='admin')
-        # valid form submission should update user record
-        data = {
+    def random_profile(self, user):
+        return {
             'first_name': '%s_%d' % (user.first_name, randint(0, 100)),
             'last_name': '%s_%d' % (user.last_name, randint(0, 100)),
             'date_of_birth': '%d-%02d-%02d' %
@@ -79,13 +77,8 @@ class ContactTest(TestCase):
             'other_contacts': '%s_%d' %
             (user.userprofile.other_contacts, randint(0, 100)),
         }
-        self.client.login(username='admin', password='admin')
-        response = self.client.post('/edit', data)
-        self.assertEquals(response.status_code, 302)
-        self.assertEqual(
-            response['Location'], 'http://testserver/')
-        # reload user
-        user = User.objects.get(username='admin')
+
+    def assertUserEqualsData(self, user, data):
         for k, v in data.iteritems():
             if k in ('first_name', 'last_name'):
                 user_value = getattr(user, k)
@@ -94,3 +87,36 @@ class ContactTest(TestCase):
             if k == 'date_of_birth':
                 user_value = user_value.strftime('%Y-%m-%d')
             self.assertEquals(v, user_value)
+
+    def test_edit_form(self):
+        user = User.objects.get(username='admin')
+        # valid form submission should update user record
+        data = self.random_profile(user)
+        self.client.login(username='admin', password='admin')
+        response = self.client.post('/edit', data)
+        self.assertEquals(response.status_code, 302)
+        self.assertEqual(
+            response['Location'], 'http://testserver/')
+        # reload user
+        user = User.objects.get(username='admin')
+        self.assertUserEqualsData(user, data)
+
+    def test_edit_ajax_response(self):
+        self.client.login(username='admin', password='admin')
+        response = self.client.post(
+            '/edit',
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEquals(response.status_code, 200)
+        # edit view should return json content
+        self.assertIn('application/json', response['Content-Type'])
+        # empty call should return errors
+        self.assertNotContains(response, 'errors')
+        # valid call should not return errors
+        user = User.objects.get(username='admin')
+        data = self.random_profile(user)
+        response = self.client.post(
+            '/edit',
+            data,
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        user = User.objects.get(username='admin')
+        self.assertUserEqualsData(user, data)
