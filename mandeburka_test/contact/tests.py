@@ -2,6 +2,8 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from mandeburka_test.contact.models import Request
 from random import randint
+from django.template import Template, Context
+from django.contrib.sites.models import Site
 
 
 class ContactTest(TestCase):
@@ -119,3 +121,19 @@ class ContactTest(TestCase):
         self.assertNotContains(response, 'errors')
         user = User.objects.get(username='admin')
         self.assertUserEqualsData(user, data)
+
+    def test_edit_link_tag(self):
+        t = Template('{% load edit_link %}{% edit_link object %}')
+        user = User.objects.get(username='admin')
+        c = Context({'object': user})
+        self.assertEquals(
+            'http://testserver/admin/auth/user/%d/' % user.id,
+            t.render(c)
+        )
+        site = Site.objects.get(pk=1)
+        c = Context({'object': site})
+        self.assertEquals(
+            'http://testserver/admin/sites/site/%d/' % site.id,
+            t.render(c)
+        )
+        self.render
