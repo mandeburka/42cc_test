@@ -2,9 +2,76 @@
 {% block stylesheets %}
   {{ block.super }}
   <link href="{{ STATIC_URL }}css/edit.css" rel="stylesheet">
+  <link href="{{ STATIC_URL }}css/smoothness/jquery-ui-1.10.0.custom.min.css" rel="stylesheet">
+  <link href="{{ STATIC_URL }}ajaxuploader/css/fileuploader.css" media="screen" rel="stylesheet" type="text/css" />
 {% endblock stylesheets %}
+{% block javascript %}
+  {{ block.super }}
+  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.10.0.custom.min.js"></script>
+  <script src="{{ STATIC_URL }}ajaxuploader/js/fileuploader.js" ></script>
+  <script type="text/javascript">
+  var ajaxInProcess = false;
+  var patt = new RegExp('{{ MEDIA_URL }}');
+  $(function() {
+    $('#id_date_of_birth').datepicker({
+      dateFormat: 'yy-mm-dd',
+      changeYear: true,
+      changeMonth: true
+    });
+    $('#edit_form').submit(function(e){
+      e.preventDefault();
+      if (ajaxInProcess){
+        return false;
+      }
+      ajaxInProcess = true;
+      var $form = $(this)
+      var data = $form.serialize();
+      $form.find('input, textarea').attr('disabled', 'disabled');
+      $('#spinner').show();
+      $('#success').hide();
+      $.post('/edit', data, function(data){
+        $('#spinner').hide();
+        ajaxInProcess = false;
+        $form.find('input, textarea').removeAttr('disabled');
+        if (typeof data.errors != 'undefined') {
+          var msg = 'Invalid fields:\n';
+          $.each(data.errors, function(i, e){
+            msg += $('label[for="id_' + i + '"]').text().replace(/:$/, '') + '\n';
+          });
+          alert(msg);
+        } else {
+          $('#success').show();
+        }
+      });
+    });
+    var uploader = new qq.FileUploader({
+      action: "{% url contact:my_ajax_upload %}",
+      element: $('#file-uploader')[0],
+      multiple: false,
+      onComplete: function(id, fileName, responseJSON) {
+        if(responseJSON.success) {
+          $('.photo-preview').attr('src', responseJSON.path);
+          $('#id_photo').val(responseJSON.path.replace(patt, ''));
+        } else {
+          alert("upload failed!");
+        }
+      },
+      onAllComplete: function(uploads) {
+        // uploads is an array of maps
+        // the maps look like this: {file: FileObject, response: JSONServerResponse}
+      },
+      params: {
+        'csrf_token': '{{ csrf_token }}',
+        'csrf_name': 'csrfmiddlewaretoken',
+        'csrf_xname': 'X-CSRFToken',
+        'user_id': {{ user.id }}
+      },
+    });
+  });
+  </script>
+{% endblock javascript %}
 {% block content %}
-    <form action="{% url contact:edit %}" method="POST" enctype="multipart/form-data">
+    <form id="edit_form" action="{% url contact:edit %}" method="POST" enctype="multipart/form-data">
       {% csrf_token %}
       <div class="row">
         <div class="span5">
@@ -35,13 +102,12 @@
               <td>
                 {{ form.photo.errors }}
                 {{ form.photo }}
+                <div id="file-uploader"></div>
               </td>
             </tr>
             <tr>
               <td colspan="2">
-                {% if form.photo.value %}
-                  <img class="photo-preview" src="{{MEDIA_URL}}{{ form.photo.value }}"/>
-                {% endif %}
+                <img class="photo-preview" src="{{MEDIA_URL}}{{ form.photo.value }}"/>
               </td>
             </tr>
           </table>
@@ -89,6 +155,11 @@
             </tr>
           </table>
         </div>
+      </div>
+      <div class="info">
+        <img src="{{ STATIC_URL }}img/ajax-loader.gif" alt="loading..." id="spinner"
+         class="hide spinner">
+        <p id="success" class="hide">Changes have been saved</p>
       </div>
       <div class="actions">
         <input type="submit" class="btn" value="Save"/>

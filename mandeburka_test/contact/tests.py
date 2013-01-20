@@ -94,9 +94,7 @@ class ContactTest(TestCase):
         data = self.random_profile(user)
         self.client.login(username='admin', password='admin')
         response = self.client.post('/edit', data)
-        self.assertEquals(response.status_code, 302)
-        self.assertEqual(
-            response['Location'], 'http://testserver/')
+        self.assertEquals(response.status_code, 200)
         # reload user
         user = User.objects.get(username='admin')
         self.assertUserEqualsData(user, data)
@@ -110,7 +108,7 @@ class ContactTest(TestCase):
         # edit view should return json content
         self.assertIn('application/json', response['Content-Type'])
         # empty call should return errors
-        self.assertNotContains(response, 'errors')
+        self.assertContains(response, 'errors')
         # valid call should not return errors
         user = User.objects.get(username='admin')
         data = self.random_profile(user)
@@ -118,5 +116,6 @@ class ContactTest(TestCase):
             '/edit',
             data,
             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertNotContains(response, 'errors')
         user = User.objects.get(username='admin')
         self.assertUserEqualsData(user, data)

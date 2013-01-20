@@ -128,6 +128,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'south',
     'mandeburka_test.contact',
+    'ajaxuploader'
 )
 
 # A sample logging configuration. The only tangible logging

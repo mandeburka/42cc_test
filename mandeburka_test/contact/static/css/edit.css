@@ -21,3 +21,11 @@ textarea {
 .errorlist>li{
     color: red;
 }
+
+.spinner{
+    width: 24px;
+}
+
+.qq-upload-list{
+    display: none;
+}

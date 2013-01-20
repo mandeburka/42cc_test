@@ -12,5 +12,9 @@ urlpatterns = patterns(
         context_object_name='requests',
         template_name='contact/requests.html'
         ), name='requests'),
-    url(r'^edit', 'mandeburka_test.contact.views.edit', name='edit')
+    url(r'^edit', 'mandeburka_test.contact.views.edit', name='edit'),
+    url(r'start$', 'mandeburka_test.contact.views.start', name="start"),
+    url(r'ajax-upload$',
+        'mandeburka_test.contact.views.import_uploader',
+        name="my_ajax_upload"),
 )
