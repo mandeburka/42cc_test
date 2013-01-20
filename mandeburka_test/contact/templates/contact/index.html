@@ -5,8 +5,12 @@
     <p>{{ contact_user.first_name }}</p>
     <p>{{ contact_user.last_name }}</p>
     <p>{{ contact_user.userprofile.date_of_birth|date:"d.m.Y" }}</p>
-    <div>Bio:</div>
-    <p>{{ contact_user.userprofile.bio }}</p>
+    <p>
+      {% if contact_user.userprofile.photo %}
+        Photo: <br/>
+        <img src="{{ MEDIA_URL }}{{ contact_user.userprofile.photo }}"/>
+      {% endif %}
+    </p>
   </div>
   <div class="span4 offset1">
     <p>Contacts</p>
@@ -15,6 +19,8 @@
     <p>Skype: {{ contact_user.userprofile.skype }}</p>
     <div>Other contacts:</div>
     <p>{{ contact_user.userprofile.other_contacts }}</p>
+    <div>Bio:</div>
+    <p>{{ contact_user.userprofile.bio }}</p>
   </div>
   <div class="span3">
     {% if user.is_authenticated %}
