@@ -7,7 +7,7 @@ from django.contrib.sites.models import Site
 from django.core.management import call_command
 from StringIO import StringIO
 from django.contrib.contenttypes.models import ContentType
-from subprocess import check_call
+import subprocess
 import os
 from django.conf import settings
 import datetime
@@ -158,13 +158,15 @@ class ContactTest(TestCase):
         call_command('all_models', stderr=stderr, stdout=stdout)
         # check if stderr output is duplicated
         for l_out, l_err in zip(stdout.readlines(), stderr.readlines()):
-            self.assertEquals(l_err, 'error: %s' % l_out)
+            self.assertEquals(l_err, 'Error: %s' % l_out)
         self.check_all_models_output(stdout.getvalue())
 
     def test_all_models_bash_script(self):
-        check_call(['sh', os.path.join(settings.SITE_ROOT, '..', 'all_models.sh')])
+        p = subprocess.Popen(['sh', os.path.join(settings.SITE_ROOT, '..', 'all_models.sh')], stdout=subprocess.PIPE)
+        out, err = p.communicate()
         file_path = '%s.dat' % datetime.date.today().strftime('%Y-%m-%d')
         #check file created
         self.assertTrue(os.path.exists(file_path))
         f = open(file_path, 'r')
-        self.check_all_models_output(f.read())
+        for l_out, l_err in zip(out.split('\n'), f.readlines()):
+            self.assertEquals(l_err.rstrip('\n'), 'Error: %s' % l_out)
