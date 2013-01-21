@@ -4,6 +4,13 @@ from mandeburka_test.contact.models import Request
 from random import randint
 from django.template import Template, Context
 from django.contrib.sites.models import Site
+from django.core.management import call_command
+from StringIO import StringIO
+from django.contrib.contenttypes.models import ContentType
+from subprocess import check_call
+import os
+from django.conf import settings
+import datetime
 
 
 class ContactTest(TestCase):
@@ -52,8 +59,7 @@ class ContactTest(TestCase):
     def test_settings_in_context(self):
         response = self.client.get('/')
         self.assertIn('settings', response.context)
-        settings = response.context['settings']
-        self.assertEquals(settings.TIME_ZONE, 'Europe/Kiev')
+        self.assertEquals(response.context['settings'].TIME_ZONE, settings.TIME_ZONE)
 
     def test_secure_page(self):
         response = self.client.get('/edit')
@@ -136,3 +142,29 @@ class ContactTest(TestCase):
             '/admin/sites/site/%d/' % site.id,
             t.render(c)
         )
+
+    def check_all_models_output(self, output):
+        for model_type in ContentType.objects.all():
+            self.assertIn('%s_%s - %d' % (
+                model_type.app_name,
+                model_type.model,
+                len(model_type.model_class().objects.all())),
+                output
+            )
+
+    def test_all_models_command(self):
+        stdout = StringIO()
+        stderr = StringIO()
+        call_command('all_models', stderr=stderr, stdout=stdout)
+        # check if stderr output is duplicated
+        for l_out, l_err in zip(stdout.readlines(), stderr.readlines()):
+            self.assertEquals(l_err, 'error: %s' % l_out)
+        self.check_all_models_output(stdout.getvalue())
+
+    def test_all_models_bash_script(self):
+        check_call(['sh', os.path.join(settings.SITE_ROOT, '..', 'all_models.sh')])
+        file_path = '%s.dat' % datetime.date.today().strftime('%Y-%m-%d')
+        #check file created
+        self.assertTrue(os.path.exists(file_path))
+        f = open(file_path, 'r')
+        self.check_all_models_output(f.read())
