@@ -188,3 +188,17 @@ class ContactTest(TestCase):
         self.check_last_log_entry_for_action(request, ModelLog.ACTION_CREATE)
         request.delete()
         self.check_last_log_entry_for_action(request, ModelLog.ACTION_DELETE)
+
+    def test_priority_field(self):
+        response = self.client.post('/requests')
+        request = Request.objects.order_by('-created_at')[0]
+        # check if default value of priority is 0
+        self.assertEquals(request.priority, 0)
+        request.priority = 10
+        request.save()
+        for i in range(15):
+            self.client.get('/')
+        response = self.client.get('/requests')
+        # first item must be our request with priority 10
+        first_request_item = response.context['requests'][0]
+        self.assertEquals(first_request_item, request)
