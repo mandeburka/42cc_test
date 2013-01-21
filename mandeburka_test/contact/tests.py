@@ -173,7 +173,7 @@ class ContactTest(TestCase):
         log = ModelLog.objects.order_by('-created_at')
         self.assertTrue(len(log) > 0)
         log_entry = log[0]
-        self.assertEquals(log_entry.app_label, model._meta._meta.app_label)
+        self.assertEquals(log_entry.app_label, model._meta.app_label)
         self.assertEquals(log_entry.model_name, model.__class__.__name__)
         self.assertEquals(log_entry.action, action)
 
@@ -183,7 +183,7 @@ class ContactTest(TestCase):
         user.save()
         self.check_last_log_entry_for_action(user, ModelLog.ACTION_UPDATE)
 
-        request = Request(action='/some/action', method='GET')
+        request = Request(path='/some/action', method='GET')
         request.save()
         self.check_last_log_entry_for_action(request, ModelLog.ACTION_CREATE)
         request.delete()

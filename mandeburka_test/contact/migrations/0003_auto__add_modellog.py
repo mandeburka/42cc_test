@@ -12,7 +12,7 @@ class Migration(SchemaMigration):
         db.create_table('contact_modellog', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
-            ('app_lable', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('app_label', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('model_name', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('action', self.gf('django.db.models.fields.CharField')(max_length=50)),
         ))
@@ -57,7 +57,7 @@ class Migration(SchemaMigration):
         'contact.modellog': {
             'Meta': {'object_name': 'ModelLog'},
             'action': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'app_lable': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'model_name': ('django.db.models.fields.CharField', [], {'max_length': '255'})
