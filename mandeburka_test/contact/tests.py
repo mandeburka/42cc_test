@@ -146,7 +146,7 @@ class ContactTest(TestCase):
     def check_all_models_output(self, output):
         for model_type in ContentType.objects.all():
             self.assertIn('%s_%s - %d' % (
-                model_type.app_name,
+                model_type.app_label,
                 model_type.model,
                 len(model_type.model_class().objects.all())),
                 output
