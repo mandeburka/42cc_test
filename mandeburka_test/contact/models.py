@@ -20,3 +20,14 @@ class Request(models.Model):
 
     def __unicode__(self):
         return '%s %s' % (self.path, self.method)
+
+
+class ModelLog(models.Model):
+    ACTION_CREATE = 'create'
+    ACTION_UPDATE = 'update'
+    ACTION_DELETE = 'delete'
+
+    created_at = models.DateTimeField(auto_now=True)
+    app_lable = models.CharField(max_length=255)
+    model_name = models.CharField(max_length=255)
+    action = models.CharField(max_length=50)
