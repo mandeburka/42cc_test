@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from mandeburka_test.contact.models import Request
+from mandeburka_test.contact.models import Request, ModelLog
 from random import randint
 from django.template import Template, Context
 from django.contrib.sites.models import Site
@@ -168,3 +168,23 @@ class ContactTest(TestCase):
         self.assertTrue(os.path.exists(file_path))
         f = open(file_path, 'r')
         self.check_all_models_output(f.read())
+
+    def check_last_log_entry_for_action(self, model, action):
+        log = ModelLog.objects.order_by('-created_at')
+        self.assertTrue(len(log) > 0)
+        log_entry = log[0]
+        self.assertEquals(log_entry.app_label, model._meta.app_label)
+        self.assertEquals(log_entry.model_name, model.__class__.__name__)
+        self.assertEquals(log_entry.action, action)
+
+    def test_model_log(self):
+        user = User.objects.get(username='admin')
+        user.last_name = 'New Last_Name %d' % randint(0, 100)
+        user.save()
+        self.check_last_log_entry_for_action(user, ModelLog.ACTION_UPDATE)
+
+        request = Request(path='/some/action', method='GET')
+        request.save()
+        self.check_last_log_entry_for_action(request, ModelLog.ACTION_CREATE)
+        request.delete()
+        self.check_last_log_entry_for_action(request, ModelLog.ACTION_DELETE)
