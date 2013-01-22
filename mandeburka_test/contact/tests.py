@@ -11,6 +11,7 @@ import subprocess
 import os
 from django.conf import settings
 import datetime
+import sys
 
 
 class ContactTest(TestCase):
@@ -162,6 +163,7 @@ class ContactTest(TestCase):
         self.check_all_models_output(stdout.getvalue())
 
     def test_all_models_bash_script(self):
+        os.environ['PATH'] = '%s:%s' % (os.path.split(sys.executable)[0], os.environ['PATH'])
         p = subprocess.Popen(['sh', os.path.join(settings.SITE_ROOT, '..', 'all_models.sh')], stdout=subprocess.PIPE)
         out, err = p.communicate()
         file_path = '%s.dat' % datetime.date.today().strftime('%Y-%m-%d')
@@ -170,3 +172,6 @@ class ContactTest(TestCase):
         f = open(file_path, 'r')
         for l_out, l_err in zip(out.split('\n'), f.readlines()):
             self.assertEquals(l_err.rstrip('\n'), 'Error: %s' % l_out)
+        os.unlink(file_path)
+
+
