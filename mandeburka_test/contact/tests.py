@@ -144,13 +144,13 @@ class ContactTest(TestCase):
         user = User.objects.get(username='admin')
         c = Context({'object': user})
         self.assertEquals(
-            '/admin/auth/user/%d/' % user.id,
+            '<a href="/admin/auth/user/%d/">%s</a>' % (user.id, user.__class__.__name__),
             t.render(c)
         )
         site = Site.objects.get(pk=1)
         c = Context({'object': site})
         self.assertEquals(
-            '/admin/sites/site/%d/' % site.id,
+            '<a href="/admin/sites/site/%d/">%s</a>' % (site.id, site.__class__.__name__),
             t.render(c)
         )
 
