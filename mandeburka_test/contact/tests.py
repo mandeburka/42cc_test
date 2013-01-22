@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from mandeburka_test.contact.models import Request
 from random import randint
+from mandeburka_test.contact.widgets import ContactDateInput
 
 
 class ContactTest(TestCase):
@@ -119,3 +120,11 @@ class ContactTest(TestCase):
         self.assertNotContains(response, 'errors')
         user = User.objects.get(username='admin')
         self.assertUserEqualsData(user, data)
+
+    def test_date_widget(self):
+        w = ContactDateInput()
+        rendered = w.render('name', 'value', {'id': 'some_test_id'})
+        self.assertIn('id="some_test_id"', rendered)
+        self.assertIn('name="name"', rendered)
+        self.assertIn('value="value"', rendered)
+        self.assertIn('$(\'#some_test_id\').datepicker', rendered)

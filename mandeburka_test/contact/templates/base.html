@@ -11,6 +11,7 @@
   {% block stylesheets %}
     <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet">
   {% endblock stylesheets %}
+  <script src="{{ STATIC_URL }}js/jquery-1.9.0.min.js"></script>
 </head>
 
 <body>
@@ -34,7 +35,6 @@
   ================================================== -->
   <!-- Placed at the end of the document so the pages load faster -->
   {% block javascript %}
-    <script src="{{ STATIC_URL }}js/jquery-1.9.0.min.js"></script>
     <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
   {% endblock javascript %}
 </body>
