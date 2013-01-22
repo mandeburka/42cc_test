@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, post_delete
-from django.db import connection
+from django.db.utils import DatabaseError
 
 
 class UserProfile(User):
@@ -35,24 +35,25 @@ class ModelLog(models.Model):
 
     @classmethod
     def log(cls, instance, action):
-        entry = ModelLog(
-            app_label=instance._meta.app_label,
-            model_name=instance.__class__.__name__,
-            action=action
-        )
-        entry.save()
+        # exclude ModelLog changes from log
+        if not isinstance(instance, ModelLog):
+            try:
+                entry = ModelLog(
+                    app_label=instance._meta.app_label,
+                    model_name=instance.__class__.__name__,
+                    action=action
+                )
+                entry.save()
+            except DatabaseError:
+                pass
 
 
 def log_update_create(sender, instance, created, **kwargs):
-        # exclude ModelLog changes from log
-        if not isinstance(instance, ModelLog) and ModelLog._meta.db_table in connection.introspection.table_names():
-            ModelLog.log(instance, ModelLog.ACTION_CREATE if created else ModelLog.ACTION_UPDATE)
+        ModelLog.log(instance, ModelLog.ACTION_CREATE if created else ModelLog.ACTION_UPDATE)
 
 
 def log_delete(sender, instance, **kwargs):
-    # exclude ModelLog changes from log
-    if not isinstance(instance, ModelLog) and ModelLog._meta.db_table in connection.introspection.table_names():
-        ModelLog.log(instance, ModelLog.ACTION_DELETE)
+    ModelLog.log(instance, ModelLog.ACTION_DELETE)
 
 post_save.connect(log_update_create, dispatch_uid='log_update_create')
 post_delete.connect(log_delete, dispatch_uid='log_delete')
