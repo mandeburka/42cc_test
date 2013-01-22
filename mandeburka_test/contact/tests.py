@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from mandeburka_test.contact.models import Request, ModelLog
 from random import randint
+from mandeburka_test.contact.widgets import ContactDateInput
 from django.template import Template, Context
 from django.contrib.sites.models import Site
 from django.core.management import call_command
@@ -127,6 +128,16 @@ class ContactTest(TestCase):
         self.assertNotContains(response, 'errors')
         user = User.objects.get(username='admin')
         self.assertUserEqualsData(user, data)
+
+
+    def test_date_widget(self):
+        w = ContactDateInput()
+        rendered = w.render('name', 'value', {'id': 'some_test_id'})
+        self.assertIn('id="some_test_id"', rendered)
+        self.assertIn('name="name"', rendered)
+        self.assertIn('value="value"', rendered)
+        self.assertIn('$(\'#some_test_id\').datepicker', rendered)        
+        
 
     def test_edit_link_tag(self):
         t = Template('{% load edit_link %}{% edit_link object %}')
