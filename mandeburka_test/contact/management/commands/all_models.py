@@ -11,7 +11,7 @@ class Command(BaseCommand):
                 s = '%s_%s - %d\n' % (
                     model_type.app_label,
                     model_type.model,
-                    len(model_type.model_class().objects.all()))
+                    model_type.model_class().objects.count())
                 self.stdout.write(s)
                 self.stderr.write('Error: %s' % s)
         except DatabaseError:
