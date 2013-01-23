@@ -149,7 +149,7 @@ class ContactTest(TestCase):
             self.assertIn('%s_%s - %d' % (
                 model_type.app_label,
                 model_type.model,
-                len(model_type.model_class().objects.all())),
+                model_type.model_class().objects.count()),
                 output
             )
 
