@@ -15,13 +15,13 @@ class UserProfile(User):
 
 
 class Request(models.Model):
-    class Meta:
-        ordering = ['-priority', '-created_at']
-
     created_at = models.DateTimeField(auto_now=True)
     path = models.TextField()
     method = models.CharField(max_length=10)
-    priority = models.IntegerField(default=0)
+    priority = models.IntegerField(db_index=True, default=0)
+
+    class Meta:
+        ordering = ['-priority', '-created_at']
 
     def __unicode__(self):
         return '%s %s' % (self.path, self.method)
