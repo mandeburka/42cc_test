@@ -53,7 +53,9 @@ class ModelLog(models.Model):
 
 
 def log_update_create(sender, instance, created, **kwargs):
-        ModelLog.log(instance, ModelLog.ACTION_CREATE if created else ModelLog.ACTION_UPDATE)
+        ModelLog.log(
+            instance,
+            ModelLog.ACTION_CREATE if created else ModelLog.ACTION_UPDATE)
 
 
 def log_delete(sender, instance, **kwargs):

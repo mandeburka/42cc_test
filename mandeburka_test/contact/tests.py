@@ -16,7 +16,6 @@ import sys
 
 
 class ContactTest(TestCase):
-
     def test_user_exists(self):
         try:
             User.objects.get(username='admin')
@@ -61,7 +60,8 @@ class ContactTest(TestCase):
     def test_settings_in_context(self):
         response = self.client.get('/')
         self.assertIn('settings', response.context)
-        self.assertEquals(response.context['settings'].TIME_ZONE, settings.TIME_ZONE)
+        self.assertEquals(
+            response.context['settings'].TIME_ZONE, settings.TIME_ZONE)
 
     def test_secure_page(self):
         response = self.client.get('/edit')
@@ -130,28 +130,28 @@ class ContactTest(TestCase):
         user = User.objects.get(username='admin')
         self.assertUserEqualsData(user, data)
 
-
     def test_date_widget(self):
         w = ContactDateInput()
         rendered = w.render('name', 'value', {'id': 'some_test_id'})
         self.assertIn('id="some_test_id"', rendered)
         self.assertIn('name="name"', rendered)
         self.assertIn('value="value"', rendered)
-        self.assertIn('$(\'#some_test_id\').datepicker', rendered)        
-        
+        self.assertIn('$(\'#some_test_id\').datepicker', rendered)
 
     def test_edit_link_tag(self):
         t = Template('{% load edit_link %}{% edit_link object %}')
         user = User.objects.get(username='admin')
         c = Context({'object': user})
         self.assertEquals(
-            '<a href="/admin/auth/user/%d/">%s</a>' % (user.id, user.__class__.__name__),
+            '<a href="/admin/auth/user/%d/">%s</a>' %
+            (user.id, user.__class__.__name__),
             t.render(c)
         )
         site = Site.objects.get(pk=1)
         c = Context({'object': site})
         self.assertEquals(
-            '<a href="/admin/sites/site/%d/">%s</a>' % (site.id, site.__class__.__name__),
+            '<a href="/admin/sites/site/%d/">%s</a>' %
+            (site.id, site.__class__.__name__),
             t.render(c)
         )
 
@@ -174,8 +174,11 @@ class ContactTest(TestCase):
         self.check_all_models_output(stdout.getvalue())
 
     def test_all_models_bash_script(self):
-        os.environ['PATH'] = '%s:%s' % (os.path.split(sys.executable)[0], os.environ['PATH'])
-        p = subprocess.Popen(['sh', os.path.join(settings.SITE_ROOT, '..', 'all_models.sh')], stdout=subprocess.PIPE)
+        os.environ['PATH'] = '%s:%s' % (
+            os.path.split(sys.executable)[0], os.environ['PATH'])
+        p = subprocess.Popen(
+            ['sh', os.path.join(settings.SITE_ROOT, '..', 'all_models.sh')],
+            stdout=subprocess.PIPE)
         out, err = p.communicate()
         file_path = '%s.dat' % datetime.date.today().strftime('%Y-%m-%d')
         #check file created
