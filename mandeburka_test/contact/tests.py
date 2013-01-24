@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from mandeburka_test.contact.models import Request, ModelLog
 from random import randint
+from mandeburka_test.contact.widgets import ContactDateInput
 from django.template import Template, Context
 from django.contrib.sites.models import Site
 from django.core.management import call_command
@@ -11,6 +12,7 @@ import subprocess
 import os
 from django.conf import settings
 import datetime
+import sys
 
 
 class ContactTest(TestCase):
@@ -128,18 +130,28 @@ class ContactTest(TestCase):
         user = User.objects.get(username='admin')
         self.assertUserEqualsData(user, data)
 
+
+    def test_date_widget(self):
+        w = ContactDateInput()
+        rendered = w.render('name', 'value', {'id': 'some_test_id'})
+        self.assertIn('id="some_test_id"', rendered)
+        self.assertIn('name="name"', rendered)
+        self.assertIn('value="value"', rendered)
+        self.assertIn('$(\'#some_test_id\').datepicker', rendered)        
+        
+
     def test_edit_link_tag(self):
         t = Template('{% load edit_link %}{% edit_link object %}')
         user = User.objects.get(username='admin')
         c = Context({'object': user})
         self.assertEquals(
-            '/admin/auth/user/%d/' % user.id,
+            '<a href="/admin/auth/user/%d/">%s</a>' % (user.id, user.__class__.__name__),
             t.render(c)
         )
         site = Site.objects.get(pk=1)
         c = Context({'object': site})
         self.assertEquals(
-            '/admin/sites/site/%d/' % site.id,
+            '<a href="/admin/sites/site/%d/">%s</a>' % (site.id, site.__class__.__name__),
             t.render(c)
         )
 
@@ -148,7 +160,7 @@ class ContactTest(TestCase):
             self.assertIn('%s_%s - %d' % (
                 model_type.app_label,
                 model_type.model,
-                len(model_type.model_class().objects.all())),
+                model_type.model_class().objects.count()),
                 output
             )
 
@@ -162,6 +174,7 @@ class ContactTest(TestCase):
         self.check_all_models_output(stdout.getvalue())
 
     def test_all_models_bash_script(self):
+        os.environ['PATH'] = '%s:%s' % (os.path.split(sys.executable)[0], os.environ['PATH'])
         p = subprocess.Popen(['sh', os.path.join(settings.SITE_ROOT, '..', 'all_models.sh')], stdout=subprocess.PIPE)
         out, err = p.communicate()
         file_path = '%s.dat' % datetime.date.today().strftime('%Y-%m-%d')
@@ -170,6 +183,8 @@ class ContactTest(TestCase):
         f = open(file_path, 'r')
         for l_out, l_err in zip(out.split('\n'), f.readlines()):
             self.assertEquals(l_err.rstrip('\n'), 'Error: %s' % l_out)
+        os.unlink(file_path)
+
     def check_last_log_entry_for_action(self, model, action):
         log = ModelLog.objects.order_by('-created_at')
         self.assertTrue(len(log) > 0)

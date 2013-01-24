@@ -1,7 +1,6 @@
 from django import template
 from django.db import models
 from django.core import urlresolvers
-from django.contrib.contenttypes.models import ContentType
 
 register = template.Library()
 
@@ -27,12 +26,15 @@ class EditLinkNode(template.Node):
         try:
             actual_object = self.model_object.resolve(context)
             if isinstance(actual_object, models.Model):
-                return urlresolvers.reverse(
+                return '<a href="%s">%s</a>' % (
+                    urlresolvers.reverse(
                     'admin:%s_%s_change' %
                     (
                         actual_object._meta.app_label,
                         str(actual_object.__class__.__name__).lower()),
-                    args=(actual_object.id,))
+                    args=(actual_object.id,)),
+                    actual_object.__class__.__name__
+                )
         except template.VariableDoesNotExist:
             pass
         return ''
